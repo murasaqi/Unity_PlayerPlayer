@@ -24,7 +24,7 @@ namespace sp4ghet
         void Start()
         {
             m_player.Init();
-            int firstCustomHash = m_player.AllPlayables[PlayableManager.ElementType.Custom][0];
+            var firstCustomHash = m_player.AllPlayables[PlayableManager.ElementType.Custom][0];
             m_player.AddElement(PlayableManager.ElementType.Custom, firstCustomHash);
         }
 

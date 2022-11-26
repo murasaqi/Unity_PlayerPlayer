@@ -23,32 +23,32 @@ namespace sp4ghet
         {
             public ElementType type;
 
-            public int hash;
+            public System.Guid hash;
 
-            public ElementIndexer(ElementType type, int hash)
+            public ElementIndexer(ElementType type, System.Guid hash)
             {
                 this.type = type;
                 this.hash = hash;
             }
         }
 
-        private Dictionary<int, PlayableDirector> m_tracks;
-        private Dictionary<int, Animation> m_animations;
-        private Dictionary<int, UnityEngine.VFX.VisualEffect> m_vfxGraphs;
+        private Dictionary<System.Guid, PlayableDirector> m_tracks;
+        private Dictionary<System.Guid, Animation> m_animations;
+        private Dictionary<System.Guid, UnityEngine.VFX.VisualEffect> m_vfxGraphs;
 
-        private Dictionary<int, CustomPlayable> m_customPlayables;
+        private Dictionary<System.Guid, CustomPlayable> m_customPlayables;
 
         [SerializeField]
         private List<ElementIndexer> m_masterList = new List<ElementIndexer>();
 
         [SerializeField]
-        private Dictionary<ElementType, List<int>> m_allPlayables = new Dictionary<ElementType, List<int>>();
+        private Dictionary<ElementType, List<System.Guid>> m_allPlayables = new Dictionary<ElementType, List<System.Guid>>();
 
         [SerializeField]
         private bool m_respectStartOnAwake = false;
 
         public List<ElementIndexer> MasterList { get => m_masterList; }
-        public Dictionary<ElementType, List<int>> AllPlayables { get => m_allPlayables; }
+        public Dictionary<ElementType, List<System.Guid>> AllPlayables { get => m_allPlayables; }
 
         public void PlayElement(int masterIndex, bool solo = false)
         {
@@ -141,7 +141,7 @@ namespace sp4ghet
             throw new System.NotImplementedException("todo");
         }
 
-        public void AddElement(ElementType type, int hash)
+        public void AddElement(ElementType type, System.Guid hash)
         {
             bool canAdd = false;
             switch (type)
@@ -177,10 +177,10 @@ namespace sp4ghet
 
         public void Init()
         {
-            m_tracks = new Dictionary<int, PlayableDirector>(FindObjectsOfType<PlayableDirector>().ToDictionary(x => x.GetInstanceID()));
-            m_animations = new Dictionary<int, Animation>(FindObjectsOfType<Animation>().ToDictionary(x => x.GetInstanceID()));
-            m_vfxGraphs = new Dictionary<int, UnityEngine.VFX.VisualEffect>(FindObjectsOfType<UnityEngine.VFX.VisualEffect>().ToDictionary(x => x.GetInstanceID()));
-            m_customPlayables = new Dictionary<int, CustomPlayable>(FindObjectsOfType<CustomPlayable>().ToDictionary(x => x.GetInstanceID()));
+            m_tracks = new Dictionary<System.Guid, PlayableDirector>(FindObjectsOfType<PlayableDirector>().ToDictionary(x => System.Guid.Parse(x.GetComponent<PlayableTag>().Tag)));
+            m_animations = new Dictionary<System.Guid, Animation>(FindObjectsOfType<Animation>().ToDictionary(x => System.Guid.Parse(x.GetComponent<PlayableTag>().Tag)));
+            m_vfxGraphs = new Dictionary<System.Guid, UnityEngine.VFX.VisualEffect>(FindObjectsOfType<UnityEngine.VFX.VisualEffect>().ToDictionary(x => System.Guid.Parse(x.GetComponent<PlayableTag>().Tag)));
+            m_customPlayables = new Dictionary<System.Guid, CustomPlayable>(FindObjectsOfType<CustomPlayable>().ToDictionary(x => System.Guid.Parse(x.GetComponent<PlayableTag>().Tag)));
 
             m_allPlayables.Add(ElementType.Animator, m_animations.Keys.ToList());
             m_allPlayables.Add(ElementType.PlayableDirector, m_tracks.Keys.ToList());
@@ -188,6 +188,48 @@ namespace sp4ghet
             m_allPlayables.Add(ElementType.Custom, m_customPlayables.Keys.ToList());
         }
 
+        [ContextMenu("Tag Playables with GUID")]
+        public void TagPlayables()
+        {
+#if UNITY_EDITOR
+            foreach (var x in FindObjectsOfType<PlayableDirector>())
+            {
+                var tag = x.GetComponent<PlayableTag>();
+                if (tag == null)
+                {
+                    x.gameObject.AddComponent<PlayableTag>();
+                }
+            }
+
+            foreach (var x in FindObjectsOfType<Animation>())
+            {
+                var tag = x.GetComponent<PlayableTag>();
+                if (tag == null)
+                {
+                    x.gameObject.AddComponent<PlayableTag>();
+                }
+            }
+
+
+            foreach (var x in FindObjectsOfType<UnityEngine.VFX.VisualEffect>())
+            {
+                var tag = x.GetComponent<PlayableTag>();
+                if (tag == null)
+                {
+                    x.gameObject.AddComponent<PlayableTag>();
+                }
+            }
+
+            foreach (var x in FindObjectsOfType<CustomPlayable>())
+            {
+                var tag = x.GetComponent<PlayableTag>();
+                if (tag == null)
+                {
+                    x.gameObject.AddComponent<PlayableTag>();
+                }
+            }
+#endif
+        }
 
     }
 
