@@ -1,0 +1,14 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Foldout text="Playables" name="player-list">
+        <ui:GroupBox style="flex-direction: row; height: auto; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0;">
+            <ui:VisualElement style="flex-direction: row;">
+                <ui:TextField picking-mode="Ignore" label="SomePlayable" value="hogehogehogehogehoge" text="hogehogehogehogehoge" usage-hints="None" readonly="false" />
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-direction: row; margin-left: auto;">
+                <ui:Button tabindex="-1" text="Play" display-tooltip-when-elided="true" />
+                <ui:Button tabindex="-1" text="Pause" display-tooltip-when-elided="true" style="align-items: stretch;" />
+                <ui:Button tabindex="-1" text="Stop" display-tooltip-when-elided="true" />
+            </ui:VisualElement>
+        </ui:GroupBox>
+    </ui:Foldout>
+</ui:UXML>
