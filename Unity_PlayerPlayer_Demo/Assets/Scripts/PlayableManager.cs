@@ -7,7 +7,7 @@ using UnityEngine.Playables;
 
 namespace sp4ghet
 {
-    public class PlayableController : MonoBehaviour
+    public class PlayableManager : MonoBehaviour
     {
 
         public enum ElementType
@@ -36,19 +36,19 @@ namespace sp4ghet
         private Dictionary<int, Animation> m_animations;
         private Dictionary<int, UnityEngine.VFX.VisualEffect> m_vfxGraphs;
 
-        private Dictionary<int, ICustomPlayable> m_customPlayables;
+        private Dictionary<int, CustomPlayable> m_customPlayables;
 
         [SerializeField]
         private List<ElementIndexer> m_masterList = new List<ElementIndexer>();
 
         [SerializeField]
-        private Dictionary<ElementType, int> m_allPlayables = new Dictionary<ElementType, int>();
+        private Dictionary<ElementType, List<int>> m_allPlayables = new Dictionary<ElementType, List<int>>();
 
         [SerializeField]
         private bool m_respectStartOnAwake = false;
 
         public List<ElementIndexer> MasterList { get => m_masterList; }
-        public Dictionary<ElementType, int> AllPlayables { get => m_allPlayables; }
+        public Dictionary<ElementType, List<int>> AllPlayables { get => m_allPlayables; }
 
         public void PlayElement(int masterIndex, bool solo = false)
         {
@@ -138,7 +138,7 @@ namespace sp4ghet
 
         public void StopAll()
         {
-
+            throw new System.NotImplementedException("todo");
         }
 
         public void AddElement(ElementType type, int hash)
@@ -153,7 +153,10 @@ namespace sp4ghet
                     canAdd = m_vfxGraphs[hash] != null;
                     break;
                 case ElementType.PlayableDirector:
-                    canAdd = m_allPlayables != null;
+                    canAdd = m_tracks[hash] != null;
+                    break;
+                case ElementType.Custom:
+                    canAdd = m_customPlayables[hash] != null;
                     break;
             }
 
@@ -161,11 +164,15 @@ namespace sp4ghet
             {
                 m_masterList.Add(new ElementIndexer(type, hash));
             }
+            else
+            {
+                Debug.LogError("Failed to add element");
+            }
         }
 
         public void DeregisterElement(int masterIndex)
         {
-
+            throw new System.NotImplementedException("todo");
         }
 
         public void Init()
@@ -173,10 +180,12 @@ namespace sp4ghet
             m_tracks = new Dictionary<int, PlayableDirector>(FindObjectsOfType<PlayableDirector>().ToDictionary(x => x.GetInstanceID()));
             m_animations = new Dictionary<int, Animation>(FindObjectsOfType<Animation>().ToDictionary(x => x.GetInstanceID()));
             m_vfxGraphs = new Dictionary<int, UnityEngine.VFX.VisualEffect>(FindObjectsOfType<UnityEngine.VFX.VisualEffect>().ToDictionary(x => x.GetInstanceID()));
+            m_customPlayables = new Dictionary<int, CustomPlayable>(FindObjectsOfType<CustomPlayable>().ToDictionary(x => x.GetInstanceID()));
 
-            m_allPlayables.Add(ElementType.Animator, m_animations.Count);
-            m_allPlayables.Add(ElementType.PlayableDirector, m_tracks.Count);
-            m_allPlayables.Add(ElementType.VFX, m_vfxGraphs.Count);
+            m_allPlayables.Add(ElementType.Animator, m_animations.Keys.ToList());
+            m_allPlayables.Add(ElementType.PlayableDirector, m_tracks.Keys.ToList());
+            m_allPlayables.Add(ElementType.VFX, m_vfxGraphs.Keys.ToList());
+            m_allPlayables.Add(ElementType.Custom, m_customPlayables.Keys.ToList());
         }
 
 
